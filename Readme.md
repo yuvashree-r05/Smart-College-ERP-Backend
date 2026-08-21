@@ -4,6 +4,17 @@ Backend API for a college ERP system — manages students, faculty, subjects, no
 
 **Note:** This is a backend-only project. No frontend UI is included; all endpoints are documented and testable via Swagger UI.
 
+## Live Deployment
+
+- **Base URL:** https://smart-college-erp-backend.onrender.com
+- **Swagger Docs:** https://smart-college-erp-backend.onrender.com/api-docs
+
+All endpoints have been tested end-to-end on this live deployment (auth, CRUD across every module, file upload, and the QR-based attendance flow).
+
+> **Note:** Hosted on Render's free tier — the service spins down after ~15 minutes of inactivity, so the first request after idle time may take 30–60 seconds to respond while it wakes up.
+
+> **Note:** Uploaded profile images are stored on local disk, which is ephemeral on Render's free tier — files may be wiped on redeploy or restart (the student/faculty record itself is unaffected, only the image file). See Future Improvements.
+
 ## Tech Stack
 
 - Node.js + Express
@@ -12,8 +23,9 @@ Backend API for a college ERP system — manages students, faculty, subjects, no
 - bcryptjs for password hashing
 - Swagger (swagger-jsdoc + swagger-ui-express) for API documentation
 - Multer for file uploads (profile images)
+- CORS enabled
 
-## Setup
+## Setup (Local Development)
 
 1. Clone the repo and install dependencies:
    ```bash
@@ -28,14 +40,16 @@ Backend API for a college ERP system — manages students, faculty, subjects, no
 
 3. Start the server:
    ```bash
-   node app.js
+   node index.js
    ```
-   (or `nodemon app.js` for development)
+   (or `npm run dev` for auto-reload via nodemon)
 
 4. Open Swagger docs at:
    ```
    http://localhost:5000/api-docs
    ```
+
+Swagger is configured with both a **Production (Render)** and **Local development** server option — select the one you want to test from the dropdown at the top of the Swagger page.
 
 ## Authentication Flow
 
@@ -66,7 +80,8 @@ Response (200):
 
 ### 2. Authorize in Swagger
 
-- Open `http://localhost:5000/api-docs`
+- Open the Swagger docs (production or local)
+- Select the correct server from the dropdown at the top
 - Click **Authorize** (top right)
 - Paste the token (no need to type "Bearer" — added automatically)
 - Click Authorize → Close
@@ -204,11 +219,11 @@ Required fields: `facultyId`, `subjectCode`, `department`, `semester`, `section`
 }
 ```
 
-Response (201) includes the session document plus a `qrCode` (base64 data URL image) that students scan.
+Response (201) includes the session document plus a `qrCode` (base64 PNG data URL). To view it, paste the full `data:image/png;base64,...` string directly into a browser's address bar — it decodes to JSON containing `{ sessionId, token }`, which a scanner app would read automatically.
 
 **Scan & Mark Attendance** — `POST /api/attendance-session/scan` (application/json)
 
-Required fields: `studentId` (roll number), `sessionId`, `token` — the latter two come from the scanned QR code's decoded JSON payload (`{ sessionId, token }`).
+Required fields: `studentId` (roll number), `sessionId`, `token` — the latter two come from the scanned QR code's decoded JSON payload.
 
 ```json
 {
@@ -308,3 +323,25 @@ Note: `studentId` must reference an existing student, and the requested `semeste
 
 - Passwords are hashed with bcrypt via a Mongoose `pre("save")` hook — always create/update user passwords through `.save()` (via the API), never by editing documents directly in MongoDB Compass/Atlas, or the password will be stored as plaintext and login will fail.
 - JWT tokens expire after 1 day.
+- CORS is enabled globally.
+
+## Future Improvements
+
+Possible future improvements include:
+
+* Frontend interface (React/Vue admin panel + student/faculty views)
+* Dedicated QR-scanner UI for the attendance flow (currently testable only via Swagger)
+* Cloud storage for profile images (currently stored on local disk, which is ephemeral on Render's free tier)
+* Rate limiting on auth routes
+* Refresh tokens / logout & token revocation (current JWTs simply expire after 1 day)
+* Password reset / forgot-password flow
+* Docker containerization
+* Automated tests (unit/integration)
+
+## Author
+
+Yuvashree
+
+## License
+
+This project was created for learning and development purposes.

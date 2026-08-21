@@ -15,6 +15,25 @@ const authorize = require("../middleware/authorize");
 // ADMIN DASHBOARD
 // =========================
 
+/**
+ * @swagger
+ * /api/dashboard/admin:
+ *   get:
+ *     summary: Get admin dashboard
+ *     description: Returns overall statistics for students, faculty, subjects, results, attendance, and departments.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin dashboard fetched successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ *       500:
+ *         description: Server error
+ */
+
 router.get(
     "/dashboard/admin",
     authenticate,
@@ -71,6 +90,25 @@ router.get(
 // FACULTY DASHBOARD
 // =========================
 
+/**
+ * @swagger
+ * /api/dashboard/faculty:
+ *   get:
+ *     summary: Get faculty dashboard
+ *     description: Returns dashboard statistics for the authenticated faculty member.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Faculty dashboard fetched successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ *       500:
+ *         description: Server error
+ */
+
 router.get(
     "/dashboard/faculty",
     authenticate,
@@ -122,6 +160,27 @@ router.get(
 // =========================
 // STUDENT DASHBOARD
 // =========================
+
+/**
+ * @swagger
+ * /api/dashboard/student:
+ *   get:
+ *     summary: Get student dashboard
+ *     description: Returns academic and attendance statistics for the authenticated student.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Student dashboard fetched successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Server error
+ */
 
 router.get(
     "/dashboard/student",

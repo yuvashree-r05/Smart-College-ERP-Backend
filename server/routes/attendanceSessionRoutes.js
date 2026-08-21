@@ -15,6 +15,55 @@ const authorize = require("../middleware/authorize");
 
 // CREATE ATTENDANCE SESSION (GENERATE QR)
 
+/**
+ * @swagger
+ * /api/attendance-session:
+ *   post:
+ *     summary: Create attendance session
+ *     description: Allows a faculty member to create an attendance session and generate a QR code valid for 2 minutes.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - facultyId
+ *               - subjectCode
+ *               - department
+ *               - semester
+ *               - section
+ *             properties:
+ *               facultyId:
+ *                 type: string
+ *                 description: Faculty ID
+ *               subjectCode:
+ *                 type: string
+ *                 description: Subject code
+ *               department:
+ *                 type: string
+ *                 description: Department name
+ *               semester:
+ *                 type: integer
+ *                 example: 5
+ *               section:
+ *                 type: string
+ *                 example: "A"
+ *     responses:
+ *       201:
+ *         description: Attendance session created successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied. Only faculty can create an attendance session.
+ *       404:
+ *         description: Subject not found
+ *       500:
+ *         description: Server error
+ */
+
 router.post(
     "/attendance-session",
     authenticate,
@@ -97,6 +146,50 @@ router.post(
 );
 
 // SCAN QR AND MARK ATTENDANCE
+
+/**
+ * @swagger
+ * /api/attendance-session/scan:
+ *   post:
+ *     summary: Scan QR and mark attendance
+ *     description: Allows an authenticated student to mark attendance using a valid and active attendance session QR token.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - studentId
+ *               - sessionId
+ *               - token
+ *             properties:
+ *               studentId:
+ *                 type: string
+ *                 description: Student roll number
+ *                 example: "22CS035"
+ *               sessionId:
+ *                 type: string
+ *                 description: Attendance session ID received when the faculty creates the session
+ *               token:
+ *                 type: string
+ *                 description: Unique attendance session token received from the QR code
+ *     responses:
+ *       201:
+ *         description: Attendance marked successfully
+ *       400:
+ *         description: Invalid QR code, expired session, closed session, duplicate attendance, or student details do not match the attendance session
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied. Only students can scan and mark attendance.
+ *       404:
+ *         description: Student or attendance session not found
+ *       500:
+ *         description: Server error
+ */
 
 router.post(
     "/attendance-session/scan",

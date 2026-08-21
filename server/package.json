@@ -21,6 +21,8 @@
     "mongoose": "^9.7.4",
     "multer": "^2.2.0",
     "qrcode": "^1.5.4",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^14.0.1"
   },
   "devDependencies": {

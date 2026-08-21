@@ -1,12 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 
-const app = express(); 
+const app = express();
+app.use(cors()); 
 app.use(express.json());
 
 const uploadsDir = path.join(__dirname, "uploads");
